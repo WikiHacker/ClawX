@@ -84,9 +84,13 @@
   InitPluginsDir
   ClearErrors
   File "/oname=$PLUGINSDIR\update-user-path.ps1" "${PROJECT_DIR}\resources\cli\win32\update-user-path.ps1"
-  ExecWait '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\update-user-path.ps1" -Action add -CliDir "$INSTDIR\resources\cli"' $0
-  IfErrors 0 +2
+  nsExec::ExecToStack '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\update-user-path.ps1" -Action add -CliDir "$INSTDIR\resources\cli"'
+  Pop $0
+  Pop $1
+  StrCmp $0 "error" 0 +2
     DetailPrint "Warning: Failed to launch PowerShell while updating PATH."
+  StrCmp $0 "timeout" 0 +2
+    DetailPrint "Warning: PowerShell PATH update timed out."
   StrCmp $0 "0" 0 +2
     Goto _ci_done
   DetailPrint "Warning: PowerShell PATH update exited with code $0."
@@ -99,9 +103,13 @@
   InitPluginsDir
   ClearErrors
   File "/oname=$PLUGINSDIR\update-user-path.ps1" "${PROJECT_DIR}\resources\cli\win32\update-user-path.ps1"
-  ExecWait '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\update-user-path.ps1" -Action remove -CliDir "$INSTDIR\resources\cli"' $0
-  IfErrors 0 +2
+  nsExec::ExecToStack '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\update-user-path.ps1" -Action remove -CliDir "$INSTDIR\resources\cli"'
+  Pop $0
+  Pop $1
+  StrCmp $0 "error" 0 +2
     DetailPrint "Warning: Failed to launch PowerShell while removing PATH entry."
+  StrCmp $0 "timeout" 0 +2
+    DetailPrint "Warning: PowerShell PATH removal timed out."
   StrCmp $0 "0" 0 +2
     Goto _cu_pathDone
   DetailPrint "Warning: PowerShell PATH removal exited with code $0."
